@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Ibarra+Real+Nova:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&display=swap');
+@import "tailwindcss";
+
+/* =====================================================================
+   POTRERO TALENT HUB — BRAND DESIGN SYSTEM
+   Tipografías: Helvetica Neue LT Std (UI/body), Barlow Condensed (display),
+                Ibarra Real Nova (editorial/serif)
+   Colores: Navy #001c56 · Magenta #FF0198 · Lime #01FF2A · Orange #FF7D2A
+   ===================================================================== */
+
+@theme {
+  /* Tipografías */
+  --font-sans:      "Helvetica Neue", "Arial Nova", Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-display:   "Barlow Condensed", "Helvetica Neue", Arial, sans-serif;
+  --font-editorial: "Ibarra Real Nova", Georgia, "Times New Roman", serif;
+
+  /* Paleta de marca */
+  --color-brand-navy:    #001c56;
+  --color-brand-magenta: #FF0198;
+  --color-brand-lime:    #01FF2A;
+  --color-brand-orange:  #FF7D2A;
+  --color-brand-dark:    #060c1f;
+}
+
+/* ===== BASE ===== */
+
+body {
+  background-color: #060c1f;
+  color: white;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+::selection {
+  background: rgba(255, 1, 152, 0.30);
+  color: white;
+}
+
+/* Soccer ball cursor para elementos interactivos */
+a, button, [role="button"], .cursor-pointer, input[type="submit"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ctext y='22' font-size='22'%3E%E2%9A%BD%3C/text%3E%3C/svg%3E") 14 14, pointer !important;
+}
+
+/* ===== ANIMACIONES DE MARCA ===== */
+
+/* Glow pulsante magenta — para CTAs y elementos destacados */
+@keyframes potrero-glow-magenta {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 1, 152, 0.25), 0 0 50px rgba(255, 1, 152, 0.08); }
+  50%       { box-shadow: 0 0 35px rgba(255, 1, 152, 0.55), 0 0 70px rgba(255, 1, 152, 0.18); }
+}
+
+/* Pulse lime — para partidos en vivo */
+@keyframes live-pulse-lime {
+  0%, 100% { opacity: 1;    box-shadow: 0 0 8px  rgba(1, 255, 42, 0.50); }
+  50%       { opacity: 0.75; box-shadow: 0 0 22px rgba(1, 255, 42, 0.90); }
+}
+
+/* Float suave — para el logo en el header */
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+/* Shimmer — para el banner de scouting */
+@keyframes shimmer-swipe {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* Entrada desde abajo — para secciones al cargar */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Deriva suave — para las texturas de fondo */
+@keyframes texture-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 80px 80px; }
+}
+
+/* ===== CLASES DE ANIMACIÓN ===== */
+
+.animate-logo-float {
+  animation: logo-float 3.5s ease-in-out infinite;
+}
+
+.animate-live-lime {
+  animation: live-pulse-lime 1.5s ease-in-out infinite;
+}
+
+.animate-glow-magenta {
+  animation: potrero-glow-magenta 2s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease forwards;
+}
+
+/* ===== TIPOGRAFÍA DE MARCA ===== */
+
+/* Clase display para títulos condensados (estilo POTRERO wordmark) */
+.font-editorial {
+  font-family: "Ibarra Real Nova", Georgia, serif;
+}
+
+/* ===== GRADIENTES DE TEXTO ===== */
+
+/* Degradado magenta → naranja (CTA, destacados) */
+.text-gradient-potrero {
+  background: linear-gradient(135deg, #FF0198 0%, #FF7D2A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Degradado eléctrico lime (éxito, en vivo) */
+.text-gradient-electric {
+  background: linear-gradient(135deg, #01FF2A 0%, #00d9ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== FONDOS CON TEXTURA ===== */
+/* Guardar las imágenes de marca en /public/:
+   - texture-houndstooth.jpg  (patrón pata de gallo navy/blanco)
+   - texture-chevron.jpg      (patrón chevron/zigzag navy/blanco)  */
+
+.bg-texture-houndstooth {
+  background-image: url('/texture-houndstooth.jpg');
+  background-size: 100px 100px;
+  background-repeat: repeat;
+  animation: texture-drift 20s linear infinite;
+}
+
+.bg-texture-chevron {
+  background-image: url('/texture-chevron.jpg');
+  background-size: 120px 120px;
+  background-repeat: repeat;
+  animation: texture-drift 24s linear infinite;
+}
+
+/* ===== SCROLLBARS ===== */
+
+/* Scrollbar personalizada con acento magenta */
+.custom-scrollbar::-webkit-scrollbar        { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track  { background: rgba(0,0,0,0.2); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb  { background: rgba(255,1,152,0.30); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,1,152,0.65); }
+
+/* Ocultar scrollbar pero mantener scroll (carrusel horizontal) */
+.hide-scrollbar                    { -ms-overflow-style: none; scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ===== GUÍA DE USO — IDENTIDAD VISUAL =================================
+   Para nuevas secciones y componentes mantener estas convenciones:
+
+   COLORES
+   · Fondo raíz:         bg-[#060c1f]
+   · Superficies/cards:  bg-black/40  o  bg-[#001c56]/20
+   · CTA primario:       bg-[#FF0198], hover: bg-[#ff33ad]
+   · CTA secundario:     bg-[#FF7D2A]
+   · En vivo / éxito:    text-[#01FF2A] / bg-[#01FF2A]
+   · Texto muted:        text-gray-400
+   · Bordes sutiles:     border-white/10
+
+   TIPOGRAFÍA
+   · Títulos display:    font-display font-black italic uppercase (Barlow Condensed)
+   · Cuerpo/UI:          font-sans (Helvetica Neue / Arial)
+   · Editorial/citas:    font-editorial (Ibarra Real Nova)
+
+   ANIMACIONES
+   · Logo header:        animate-logo-float
+   · En vivo badge:      animate-live-lime
+   · CTAs destacados:    animate-glow-magenta
+   · Entrada sección:    motion (stagger) de Motion/Framer Motion
+   · Hover botones:      transition-all duration-300 + scale/shadow
+
+   TEXTURAS
+   · Sección hero/banner: <div class="absolute inset-0 bg-texture-houndstooth opacity-[0.04] rounded-3xl pointer-events-none" />
+   · Headers de sección:  bg-texture-chevron opacity-[0.03]
+   ===================================================================== */

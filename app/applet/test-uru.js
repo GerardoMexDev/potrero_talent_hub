@@ -1,0 +1,34 @@
+async function run() {
+  try {
+    const res = await fetch('https://site.api.espn.com/apis/v2/sports/soccer/uru.1/standings');
+    const data = await res.json();
+    const teams = [];
+    data.children?.forEach(group => {
+      group.standings.entries.forEach(entry => {
+        const t = entry.team;
+        const name = t.name.toLowerCase();
+        if (name.includes('peñarol') || name.includes('penarol') || name.includes('maldonado') || name.includes('juventud') || name.includes('racing') || name.includes('danubio')) {
+          teams.push({ id: t.id, name: t.name, displayName: t.displayName });
+        }
+      });
+    });
+    console.log("Found URU teams from standings:", teams);
+    
+    const res2 = await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/uru.1/scoreboard?dates=20260101-20261231&limit=1000');
+    const data2 = await res2.json();
+    const teams2 = new Map();
+    data2.events?.forEach(e => {
+      e.competitions[0].competitors.forEach(c => {
+        const t = c.team;
+        const name = t.name.toLowerCase();
+        if (name.includes('peñarol') || name.includes('penarol') || name.includes('maldonado') || name.includes('juventud') || name.includes('racing') || name.includes('danubio')) {
+          teams2.set(t.id, { id: t.id, name: t.name, displayName: t.displayName });
+        }
+      });
+    });
+    console.log("Found URU teams from scoreboard:", Array.from(teams2.values()));
+  } catch (e) {
+    console.error(e);
+  }
+}
+run();
