@@ -109,20 +109,73 @@ export async function getStandings(tournament: Tournament = 'libertadores'): Pro
   return data.children || [];
 }
 
+const DATE_WINDOW_MS = 30 * 24 * 60 * 60 * 1000; // 30 días hacia atrás y hacia adelante
+
+const toYmd = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
+
 /**
  * Función para obtener todos los partidos (fixture y resultados).
+ *
+ * IMPORTANTE: el scoreboard de ESPN para fútbol NO acepta un rango de fechas
+ * (`dates=YYYYMMDD-YYYYMMDD`) — devuelve 400 "Failed to get events endpoint."
+ * sin importar el torneo ni el tamaño del rango. Solo acepta una fecha exacta
+ * por pedido (`dates=YYYYMMDD`), así que hay que pedir día por día y combinar
+ * los resultados.
+ *
  * @param tournament - El torneo seleccionado
  */
 export async function getMatches(tournament: Tournament = 'libertadores'): Promise<MatchEvent[]> {
-  const currentYear = new Date().getFullYear();
   const prefix = (tournament === 'libertadores' || tournament === 'sudamericana') ? 'conmebol.' : '';
-  
-  // Pedimos los partidos de todo el año actual (01/01 al 31/12)
-  const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${prefix}${tournament}/scoreboard?dates=${currentYear}0101-${currentYear}1231&limit=1000`);
-  
-  if (!res.ok) throw new Error('Failed to fetch matches');
-  
-  const data = await res.json();
-  // Retornamos los eventos (partidos)
-  return data.events || [];
+  const base = `https://site.api.espn.com/apis/site/v2/sports/soccer/${prefix}${tournament}/scoreboard`;
+
+  const todayStr = toYmd(new Date());
+
+  // Pedimos el día de hoy primero: además de sus partidos, trae el calendario
+  // de fechas válidas de la temporada (cuando el torneo es de tipo "día" / liga).
+  const seedRes = await fetch(`${base}?dates=${todayStr}&limit=1000`);
+  if (!seedRes.ok) throw new Error('Failed to fetch matches');
+  const seedData = await seedRes.json();
+  const league = seedData.leagues?.[0];
+
+  const now = Date.now();
+  let datesToFetch: string[];
+
+  if (league?.calendarType === 'day' && Array.isArray(league.calendar)) {
+    // Ligas de todos contra todos: el calendario ya trae solo las fechas con partidos.
+    datesToFetch = league.calendar
+      .map((iso: string) => new Date(iso))
+      .filter((d: Date) => Math.abs(d.getTime() - now) <= DATE_WINDOW_MS)
+      .map(toYmd);
+  } else {
+    // Copas por fases (Libertadores/Sudamericana): no hay calendario plano,
+    // recorremos día por día la ventana de fechas cercanas a hoy.
+    datesToFetch = [];
+    for (let t = now - DATE_WINDOW_MS; t <= now + DATE_WINDOW_MS; t += 24 * 60 * 60 * 1000) {
+      datesToFetch.push(toYmd(new Date(t)));
+    }
+  }
+
+  const uniqueDates = Array.from(new Set(datesToFetch));
+
+  const dayResults = await Promise.all(
+    uniqueDates.map(async (d) => {
+      if (d === todayStr) return (seedData.events || []) as MatchEvent[];
+      try {
+        const res = await fetch(`${base}?dates=${d}&limit=1000`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return (data.events || []) as MatchEvent[];
+      } catch {
+        return [];
+      }
+    })
+  );
+
+  // Combinamos y quitamos duplicados (un mismo partido puede aparecer si se
+  // solapan fechas del calendario con la ventana de días).
+  const merged = new Map<string, MatchEvent>();
+  for (const events of dayResults) {
+    for (const ev of events) merged.set(ev.id, ev);
+  }
+  return Array.from(merged.values());
 }
