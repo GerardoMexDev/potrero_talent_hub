@@ -66,7 +66,8 @@ Ver detalle completo en memoria `project_potrero_brand`. Resumen de lo que ya es
 - [ ] **Revisar vigencia de Copa Sudamericana**: confirmar si el torneo sigue activo. Si no, quitarla o hacerla oculta (misma lógica que Liga Expansión MX).
 - [ ] **Revisar vigencia de Copa Libertadores**: mismo chequeo y mismo tratamiento que Sudamericana.
 - [ ] **Revisar horarios/timezones del resto de las ligas** poco a poco. El problema de husos horarios que había con México debería resolverse solo al quitar Liga Expansión MX (era el único caso problemático detectado). Repasar Rusia, Chile, Perú, Australia, Uruguay para confirmar que la hora local + hora Uruguay se ven bien.
-- [ ] **Subir el proyecto a GitHub**. Ya existe `origin` apuntando a `https://github.com/GerardoMexDev/potrero_talent_hub.git` — confirmar que es el repo correcto antes de commitear/pushear los cambios de esta sesión (fix de `api.ts` + este `AVANCES.md`).
+- [x] **Subir el proyecto a GitHub**. Confirmado el repo (`https://github.com/GerardoMexDev/potrero_talent_hub.git`), se hizo commit + push del fix de `api.ts` y este `AVANCES.md` a `master` (commit `5ab343e`).
+- [x] **Rama por defecto del repo**: GitHub tenía `main` como default (solo con el commit inicial vacío, generado al crear el repo), mientras todo el proyecto real vivía en `master`. Se cambió el default branch a `master` desde la configuración del repo — ya no debería aparecer el aviso de "Compare & pull request". La rama `main` queda sin uso (se puede borrar cuando el usuario lo pida).
 
 ### 2026-09-17 — Revisión completa de contexto + creación de este archivo
 - Se repasó toda la estructura del proyecto: `App.tsx`, `server.ts`, `src/lib/api.ts`, `src/components/*`, `src/constants/players.ts`, `src/index.css`, `public/`, docs existentes (`README.md`, `DOCUMENTATION.md`, `Documentacion_Arquitectura.md`) y la memoria de la integración de marca Potrero.
